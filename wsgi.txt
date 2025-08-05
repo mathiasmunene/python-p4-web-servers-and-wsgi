@@ -1,0 +1,66 @@
+A Simple Werkzeug Application
+
+Run pipenv install && pipenv shell to generate and enter your virtual environment. This will install Werkzeug, alongside our usual testing and debugging libraries.
+
+In server/werkzeug_app.py, enter the following code:
+
+from werkzeug.wrappers import Request, Response
+
+@Request.application
+def application(request):
+    print(f'This web server is running at {request.remote_addr}')
+    return Response('A WSGI generated this response!')
+
+if __name__ == '__main__':
+    from werkzeug.serving import run_simple
+    run_simple(
+        hostname='localhost',
+        port=5555,
+        application=application
+    )
+
+Let's break down our code a bit:
+
+@Request.application
+def application(request):
+    print(f'This web server is running at {request.remote_addr}')
+    return Response('A WSGI generated this response!')
+
+This is the sole function inside of our script. (You can call it anything, we used application for simplicity's sake.) It is decorated with the Request.application method, which tells it to run any code inside of the function in the browser at the location we specify with our development server.
+
+run_simple(
+    hostname='localhost',
+    port=5555,
+    application=application
+)
+
+The run_simple() method runs a server for a one-page application without complications. It is not suited for a production server that supports millions of users, but it gives us the tools we need to develop new pages for the web applications that we eventually deploy to those servers.
+
+run_simple() requires three arguments: a hostname (generally localhost, as it is typically used for local development), a port, and an application. This application will be defined in a function somewhere in the file- as we saw before, we named ours application.
+
+Run python server/werkzeug_app.py (or change the file to be executable first if you prefer). You should see the following in the terminal:
+
+ python server/werkzeug_app.py
+
+ => WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+
+ => * Running on http://localhost:5555/ (Press CTRL+C to quit)
+
+Go to localhost:5555 and you should see the following:
+
+Google Chrome page with text "A WSGI generated this response!"
+
+Back in the terminal, you should see a message generated from our request:
+
+ => This web server is running at 127.0.0.1
+
+ => 127.0.0.1 - - [29/Aug/2022 07:11:39] "GET / HTTP/1.1" 200 -
+
+All of this together created an application and a web server that allowed us to access a message in our browser.
+Conclusion
+
+This was a brief introduction to web servers and WSGI. We won't typically build servers and applications in a single file, nor will we move requests and responses around without manipulating any of their attributes.
+
+Most of the work performed by a WSGI will be invisible in modern web application frameworks, but it is important to know that this is going on behind the scenes. Without WSGIs, servers and Python applications would have a very difficult time communicating with one another. People might not be using Python for web development at all without its popular WSGIs.
+
+We will explore more practical implementations of web servers with Flask and Werkzeug (and in greater depth) throughout Phase 4.
